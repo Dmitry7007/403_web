@@ -1,32 +1,43 @@
 from rest_framework import serializers
-from main.models import Article, Comment, Category
+from main.models import User, Article, Comment, Category
 
-class ArticleSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Article
+        model = User
         fields = [
-            'id',
-            'title',
-            'text',
-            'created_at',
-            'category',
+            'id', 
+            'name'
         ]
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = [
-            'id',
-            'text',
+            'id', 
+            'user', 
+            'text', 
+            'created_at'
+            #'article'
+        ]
+
+class ArticleSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(read_only=True, many=True)
+    class Meta:
+        model = Article
+        fields = [
+            'id', 
+            'title', 
+            'text', 
             'created_at',
-            'article',
+            'category',
+            'comments'
         ]
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = [
-            'id',
+            'id', 
             'name',
-            'created_at',
+            'description'
         ]
