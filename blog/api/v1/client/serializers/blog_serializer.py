@@ -9,19 +9,8 @@ class UserSerializer(serializers.ModelSerializer):
             'name'
         ]
 
-class CommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = [
-            'id', 
-            'user', 
-            'text', 
-            'created_at'
-            #'article'
-        ]
 
 class ArticleSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(read_only=True, many=True)
     class Meta:
         model = Article
         fields = [
@@ -30,14 +19,32 @@ class ArticleSerializer(serializers.ModelSerializer):
             'text', 
             'created_at',
             'category',
-            'comments'
+            'published',
         ]
 
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = [
+            'id', 
+            'user', 
+            'text', 
+            'created_at',
+            'article'
+        ]
+
+
 class CategorySerializer(serializers.ModelSerializer):
+    articles = ArticleSerializer(many=True, source='article_set')
+    article_count = serializers.IntegerField(source='count')
+
     class Meta:
         model = Category
         fields = [
             'id', 
             'name',
-            'description'
+            'description',
+            'article_count',
+            'articles',
         ]
